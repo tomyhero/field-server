@@ -82,7 +82,12 @@ func (h *FieldHandler) broadcast(database map[string]interface{}, conns map[net.
 
 		data := database["DATA"].(map[string]interface{})
 
-		cdata := context.CData{Header: map[string]interface{}{"CMD": "broadcast"}, Body: data}
+		tmp := []map[string]interface{}{}
+		for _, d := range data {
+			tmp = append(tmp, d.(map[string]interface{}))
+		}
+
+		cdata := context.CData{Header: map[string]interface{}{"CMD": "broadcast"}, Body: map[string]interface{}{"LIST": tmp}}
 		for conn, _ := range conns {
 			err := cm.Send(conn, cdata.GetData())
 			if err != nil {
